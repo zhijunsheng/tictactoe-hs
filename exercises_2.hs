@@ -1,3 +1,14 @@
+-- 5
+init' :: [a] -> [a]
+init' [] = error "empty list not allowed"
+init' [x] = []
+init' (x:xs) = [x] ++ init' xs 
+
+init'' :: [a] -> [a]
+init'' [] = error "empty list not allowed"
+init'' [x] = []
+init'' xs = reverse (tail (reverse xs))
+
 -- 4
 last' :: [a] -> a
 last' [] = error "empty list not allowed"
