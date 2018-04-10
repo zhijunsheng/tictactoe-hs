@@ -1,3 +1,5 @@
+import Data.Char
+
 func_7_9_1 :: (a -> Bool) -> (a -> b) -> [a] -> [b]
 func_7_9_1 p f xs = [f x | x <- xs, p x]
 
@@ -86,5 +88,59 @@ curry' f = \x y -> f (x,y)
 
 uncurry' :: (a -> b -> c) -> ((a,b) -> c)
 uncurry' f = \(x,y) -> f x y
+
+--6
+int2bin :: Int -> [Int]
+int2bin 0 = []
+int2bin x = (int2bin (div x 2)) ++ [mod x 2]
+
+unfold :: (a -> Bool) -> (a -> b) -> (a -> a) -> a -> [b]
+unfold p h t x 
+  | p x = []
+  | otherwise = h x : unfold p h t (t x)
+
+int2bin' :: Int -> [Int]
+int2bin' = unfold (== 0) (`mod` 2) (`div` 2)
+
+map''' :: (a -> b) -> [a] -> [b]
+map''' f = unfold null (f . head) tail
+
+chop8 :: [Int] -> [[Int]]
+chop8 = unfold null (take 8) (drop 8)
+
+iterate' :: (a -> a) -> a -> [a]
+iterate' f = unfold (\_ -> False) id f
+
+--7
+type Bit = Int
+make8 :: [Bit] -> [Bit]
+make8 bits = take 8 (bits ++ repeat 0)
+addparity :: [Bit] -> [Bit]
+addparity xs = if even (sum xs) then xs ++ [0] else xs ++ [1]
+encode :: String -> [Bit]
+encode = concat . map''' (addparity . make8 . int2bin' . ord) 
+bin2int :: [Bit] -> Int
+bin2int = sum . zipWith (*) (iterate' (*2) 1) 
+chop9 :: [Bit] -> [[Bit]]
+chop9 = unfold null (take 9) (drop 9)
+checkparity :: [Bit] -> [Bit]
+checkparity xs = if even (sum xs) then take 8 xs else error "failed with parity"
+decode :: [Bit] -> String
+decode = map''' chr . map''' bin2int . map''' checkparity . chop9
+channel :: [Bit] -> [Bit]
+channel = id
+transmit :: String -> String
+transmit = decode . channel . encode
+
+--9
+altMap :: (a -> b) -> (a -> b) -> [a] -> [b]
+altMap f g xs = [if even i then f x else g x | (i,x) <- zip [0..] xs]
+
+--10
+luhnDouble :: Int -> Int
+luhnDouble x = if 2*x > 9 then 2*x - 9 else 2*x
+
+luhn :: [Int] -> Bool
+luhn xs = sum (altMap (luhnDouble) (id) xs) `mod` 10 == 0
 
 
