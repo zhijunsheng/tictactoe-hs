@@ -10,3 +10,5 @@ maybeEven :: Maybe Int -> Maybe Bool
 maybeEven Nothing = Nothing
 maybeEven (Just x) = Just (even x)
 
+maybe_bools = maybeMap maybeEven [Just 1, Just 2, Just 3, Just 4]
+

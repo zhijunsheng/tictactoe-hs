@@ -1,4 +1,5 @@
 import Data.Semigroup
+import Data.List.Split
 
 foldr' :: (a -> b -> b) -> b -> [a] -> b
 foldr' _ v [] = v
@@ -55,4 +56,10 @@ coin = createPTable ["heads","tails"] [0.5,0.5]
 
 spinner :: PTable
 spinner = createPTable ["red","blue","green"] [0.1,0.2,0.7]
+
+probsTotal = sum (map (read.(!!1).splitOn "|") (filter (not . null) (splitOn "\n" $ show (coin <> spinner))) :: [Double])
+
+probsFromPTable :: PTable -> Probs
+probsFromPTable (PTable x y) = y
+probsTotal' = sum . probsFromPTable $ coin <> spinner
 

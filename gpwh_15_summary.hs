@@ -17,11 +17,24 @@ instance Cipher OneTimePad where
 myOTP :: OneTimePad
 myOTP = OTP (cycle [minBound .. maxBound])
 
-data StreamCipher = StreamCipher
+data StreamCipher = SC Int
 
 instance Cipher StreamCipher where
-  encode StreamCipher text = ""
-  decode StreamCipher text = ""
+  encode (SC seed) text = applyOTP pad text where OTP pad = prngOTP seed
+  decode (SC seed) text = applyOTP pad text where OTP pad = prngOTP seed
+
+streamcipher_sample = decode (SC 12345) $ encode (SC 12345) "Haskell"
+
+-- StreamCipher
+
+prng :: Int -> Int -> Int -> Int -> Int
+prng a b max seed = (a * seed + b) `mod` max
+
+examplePRNG :: Int -> Int
+examplePRNG = prng 1337 7 100
+
+prngOTP :: Int -> OneTimePad
+prngOTP seed = OTP $ map (bitsToChar.intToBits) (tail $ iterate examplePRNG seed)
 
 -- OTP
 

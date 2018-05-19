@@ -56,6 +56,8 @@ price (RecordItem record) = recordPrice record
 price (ToyItem toy) = toyPrice toy
 price (PamphletItem _) = 0.0
 
+pamphlet_price = price (PamphletItem Pamphlet {pamphletTitle = "", pamphletDesc = "", organization = ""})
+
 instance Show Creator where
   show (AuthorCreator (Author (Name f l)))  = "Author: " ++ f ++ " " ++ l
   show (AuthorCreator (Author (NameWithMiddle f m l))) = "Author: " ++ f ++ " " ++ m ++ " " ++ l
